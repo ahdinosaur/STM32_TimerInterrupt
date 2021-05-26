@@ -44,26 +44,24 @@
   #define STM32_TIMER_INTERRUPT_VERSION       "STM32TimerInterrupt v1.2.0"
 #endif
 
-#include <functional>
-
 #include "TimerInterrupt_Generic_Debug.h"
 
 class STM32TimerInterrupt;
 
 typedef STM32TimerInterrupt STM32Timer;
 
-using timerCallback = std::function<void(void)>;
+using STM32TimerCallback = std::function<void(void)>;
 
 
 class STM32TimerInterrupt
 {
   private:
-    TIM_TypeDef*    _timer;
-    HardwareTimer*  _hwTimer = NULL;
+    TIM_TypeDef*        _timer;
+    HardwareTimer*      _hwTimer = NULL;
 
-    timerCallback   _callback;        // pointer to the callback function
-    float           _frequency;       // Timer frequency
-    uint32_t        _timerCount;      // count to activate timer
+    STM32TimerCallback  _callback;        // pointer to the callback function
+    float               _frequency;       // Timer frequency
+    uint32_t            _timerCount;      // count to activate timer
 
   public:
 
@@ -72,8 +70,6 @@ class STM32TimerInterrupt
       _timer = timer;
       
       _hwTimer = new HardwareTimer(_timer);
-      
-      _callback = NULL;
     };
     
     ~STM32TimerInterrupt()
@@ -84,7 +80,7 @@ class STM32TimerInterrupt
 
     // frequency (in hertz) and duration (in milliseconds). Duration = 0 or not specified => run indefinitely
     // No params and duration now. To be addes in the future by adding similar functions here or to STM32-hal-timer.c
-    bool setFrequency(float frequency, timerCallback callback)
+    bool setFrequency(float frequency, STM32TimerCallback callback)
     {
       // select timer frequency is 1MHz for better accuracy. We don't use 16-bit prescaler for now.
       // Will use later if very low frequency is needed.
@@ -106,19 +102,19 @@ class STM32TimerInterrupt
 
     // interval (in microseconds) and duration (in milliseconds). Duration = 0 or not specified => run indefinitely
     // No params and duration now. To be addes in the future by adding similar functions here or to STM32-hal-timer.c
-    bool setInterval(unsigned long interval, timerCallback callback)
+    bool setInterval(unsigned long interval, STM32TimerCallback callback)
     {
       return setFrequency((float) (1000000.0f / interval), callback);
     }
 
-    bool attachInterrupt(float frequency, timerCallback callback)
+    bool attachInterrupt(float frequency, STM32TimerCallback callback)
     {
       return setFrequency(frequency, callback);
     }
 
     // interval (in microseconds) and duration (in milliseconds). Duration = 0 or not specified => run indefinitely
     // No params and duration now. To be addes in the future by adding similar functions here or to STM32-hal-timer.c
-    bool attachInterruptInterval(unsigned long interval, timerCallback callback)
+    bool attachInterruptInterval(unsigned long interval, STM32TimerCallback callback)
     {
       return setFrequency( (float) ( 1000000.0f / interval), callback);
     }
