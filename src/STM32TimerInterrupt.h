@@ -44,13 +44,15 @@
   #define STM32_TIMER_INTERRUPT_VERSION       "STM32TimerInterrupt v1.2.0"
 #endif
 
+#include <functional>
+
 #include "TimerInterrupt_Generic_Debug.h"
 
 class STM32TimerInterrupt;
 
 typedef STM32TimerInterrupt STM32Timer;
 
-typedef void (*timerCallback)  ();
+using timerCallback = std::function<void(void)>;
 
 
 class STM32TimerInterrupt
